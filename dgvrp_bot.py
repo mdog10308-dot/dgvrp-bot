@@ -52,105 +52,186 @@ def create_embed(title, description, color=discord.Color.blue()):
     return embed
 
 # --- SESSION COMMANDS ---
-@bot.hybrid_command(name="startsession", description="Start a staff session")
+@bot.hybrid_command(name="startsession", description="Start a session")
 @commands.has_permissions(manage_messages=True)
 async def startsession(ctx):
-    embed = create_embed("🚀 Session Started", f"Session started by {ctx.author.mention}", discord.Color.green())
-    await ctx.send(embed=embed)
+    start_embed = discord.Embed(
+        title="Session result:",
+        description=(
+            f"📄 **Reason:** Session Started\n"
+            f"👤 **Moderator:** {ctx.author.mention}\n"
+            f"📍 **Location:** Staff Training Room\n\n"
+            f"**Details:**\n"
+            f"✔️ The session has officially begun. [@everyone]"
+        ),
+        color=0x2b2d31
+    )
+    start_embed.set_footer(text="DGVRP")
+    await ctx.send(content="@everyone", embed=start_embed)
 
-@bot.hybrid_command(name="endsession", description="End a staff session")
+
+@bot.hybrid_command(name="endsession", description="End a session")
 @commands.has_permissions(manage_messages=True)
 async def endsession(ctx):
-    embed = create_embed("🏁 Session Ended", f"Session ended by {ctx.author.mention}", discord.Color.red())
-    await ctx.send(embed=embed)
+    end_embed = discord.Embed(
+        title="Session result:",
+        description=(
+            f"📄 **Reason:** Session Ended\n"
+            f"👤 **Moderator:** {ctx.author.mention}\n"
+            f"🚥 **Status:** Now Closed\n\n"
+            f"**Details:**\n"
+            f"✔️ The session has concluded."
+        ),
+        color=0x2b2d31
+    )
+    end_embed.set_footer(text="DGVRP")
+    
+    # Removed the content="@everyone" part here
+    await ctx.send(embed=end_embed)
 
 # --- INFRACTION SYSTEM ---
 @bot.hybrid_command(name="infract", description="Log a custom infraction")
 @commands.has_permissions(moderate_members=True)
-async def infract(ctx, member: discord.Member, type: str, *, reason: str):
+async def infract(ctx, member: discord.Member, type: str, points: int, *, reason: str = "No reason provided"):
+    # Keeps your database logic working
     data = load_data()
     entry = {
         "user": str(member.id),
         "type": type,
+        "points": points,
         "reason": reason,
         "admin": str(ctx.author.id),
         "date": str(datetime.now())
     }
     data["infractions"].append(entry)
     save_data(data)
-    
-    embed = create_embed("⚠️ Infraction Logged", f"**Member:** {member.mention}\n**Type:** {type}\n**Reason:** {reason}", discord.Color.orange())
-    await ctx.send(embed=embed)
+
+    # Embed matches the Promotion style exactly
+    infract_embed = discord.Embed(
+        title="Infraction result:",
+        description=(
+            f"📄 **Reason:** {reason}\n"
+            f"👤 **Moderator:** {ctx.author.mention}\n"
+            f"⚠️ **Type:** {type} ({points} pts)\n\n"
+            f"**Infracted:**\n"
+            f"✔️ {member.display_name} [{member.id}]"
+        ),
+        color=0x2b2d31
+    )
+    infract_embed.set_footer(text="DGVRP")
+    await ctx.send(embed=infract_embed)
+
 
 # --- MODERATION COMMANDS ---
-@bot.hybrid_command(name="warn", description="Warn a member")
+@bot.hybrid_command(name="warn", description="Warn a user")
 @commands.has_permissions(moderate_members=True)
-async def warn(ctx, member: discord.Member, *, reason: str):
-    embed = create_embed("📝 Warning", f"**Member:** {member.mention}\n**Reason:** {reason}", discord.Color.yellow())
-    await ctx.send(embed=embed)
+async def warn(ctx, member: discord.Member, *, reason: str = "No reason provided"):
+    warn_embed = discord.Embed(
+        title="Warn result:",
+        description=(
+            f"📄 **Reason:** {reason}\n"
+            f"👤 **Moderator:** {ctx.author.mention}\n"
+            f"⚠️ **Action:** Warning issued\n\n"
+            f"**Warned:**\n"
+            f"✔️ {member.display_name} [{member.id}]"
+        ),
+        color=0x2b2d31
+    )
+    warn_embed.set_footer(text="DGVRP")
+    await ctx.send(embed=warn_embed)
 
-@bot.hybrid_command(name="mute", description="Mute a member (Timeout)")
+@bot.hybrid_command(name="mute", description="Mute a user")
 @commands.has_permissions(moderate_members=True)
-async def mute(ctx, member: discord.Member, minutes: int, *, reason: str = "No reason provided"):
+async def mute(ctx, member: discord.Member, duration: str, *, reason: str = "No reason provided"):
+    mute_embed = discord.Embed(
+        title="Mute result:",
+        description=(
+            f"📄 **Reason:** {reason}\n"
+            f"👤 **Moderator:** {ctx.author.mention}\n"
+            f"⏳ **Duration:** {duration}\n\n"
+            f"**Muted:**\n"
+            f"✔️ {member.display_name} [{member.id}]"
+        ),
+        color=0x2b2d31
+    )
+    mute_embed.set_footer(text="DGVRP")
+    await ctx.send(embed=mute_embed)
+    
     # 1. Prepare the Embed first
-    embed = discord.Embed(
-        title="🔇 Member Muted",
-        description=f"**User:** {member.mention}\n**Duration:** {minutes} minutes\n**Reason:** {reason}",
-        color=discord.Color.dark_grey(),
-        timestamp=datetime.now()
-    )
-    embed.set_footer(text=f"Action by {ctx.author.name}")
-
-    try:
-        # 2. Apply the actual mute
-        duration = timedelta(minutes=minutes)
-        await member.timeout(duration, reason=reason)
-        
-        # 3. Send the message ONLY if the mute worked
-        await ctx.send(embed=embed)
-        
-    except discord.Forbidden:
-        await ctx.send("❌ **I can't mute this user!** My role must be higher than theirs.")
-    except Exception as e:
-        await ctx.send(f"⚠️ **Error:** {e}")
-
-@bot.hybrid_command(name="unmute", description="Unmute a member")
+    
+@bot.hybrid_command(name="unmute", description="Unmute a user")
 @commands.has_permissions(moderate_members=True)
-async def unmute(ctx, member: discord.Member):
-    embed = discord.Embed(
-        title="🔊 Member Unmuted",
-        description=f"{member.mention} has been unmuted.",
-        color=discord.Color.green(),
-        timestamp=datetime.now()
+async def unmute(ctx, member: discord.Member, *, reason: str = "No reason provided"):
+    unmute_embed = discord.Embed(
+        title="Unmute result:",
+        description=(
+            f"📄 **Reason:** {reason}\n"
+            f"👤 **Moderator:** {ctx.author.mention}\n"
+            f"🔊 **Action:** Mute Lifted\n\n"
+            f"**Unmuted:**\n"
+            f"✔️ {member.display_name} [{member.id}]"
+        ),
+        color=0x2b2d31
     )
+    unmute_embed.set_footer(text="DGVRP")
+    await ctx.send(embed=unmute_embed)
 
-    try:
-        await member.timeout(None)
-        await ctx.send(embed=embed)
-    except discord.Forbidden:
-        await ctx.send("❌ **Forbidden:** I don't have permission to unmute this user.")
 
-@bot.hybrid_command(name="kick", description="Kick a member")
+@bot.hybrid_command(name="kick", description="Kick a user")
 @commands.has_permissions(kick_members=True)
 async def kick(ctx, member: discord.Member, *, reason: str = "No reason provided"):
-    await member.kick(reason=reason)
-    embed = create_embed("👢 Member Kicked", f"**Member:** {member.mention}\n**Reason:** {reason}")
-    await ctx.send(embed=embed)
+    kick_embed = discord.Embed(
+        title="Kick result:",
+        description=(
+            f"📄 **Reason:** {reason}\n"
+            f"👤 **Moderator:** {ctx.author.mention}\n"
+            f"👢 **Action:** Removed from server\n\n"
+            f"**Kicked:**\n"
+            f"✔️ {member.display_name} [{member.id}]"
+        ),
+        color=0x2b2d31
+    )
+    kick_embed.set_footer(text="DGVRP")
+    await ctx.send(embed=kick_embed)
 
-@bot.hybrid_command(name="ban", description="Ban a member")
+    
+@bot.hybrid_command(name="ban", description="Ban a user")
 @commands.has_permissions(ban_members=True)
 async def ban(ctx, member: discord.Member, *, reason: str = "No reason provided"):
-    await member.ban(reason=reason)
-    embed = create_embed("🔨 Member Banned", f"**Member:** {member.mention}\n**Reason:** {reason}", discord.Color.dark_red())
-    await ctx.send(embed=embed)
+    ban_embed = discord.Embed(
+        title="Ban result:",
+        description=(
+            f"📄 **Reason:** {reason}\n"
+            f"👤 **Moderator:** {ctx.author.mention}\n"
+            f"🚫 **Action:** Permanent Ban\n\n"
+            f"**Banned:**\n"
+            f"✔️ {member.display_name} [{member.id}]"
+        ),
+        color=0x2b2d31
+    )
+    ban_embed.set_footer(text="DGVRP")
+    await ctx.send(embed=ban_embed)
+
 
 # --- PROMOTION ---
-@bot.hybrid_command(name="promote", description="Promote a member")
-@commands.has_permissions(administrator=True)
-async def promote(ctx, member: discord.Member, role: discord.Role):
-    await member.add_roles(role)
-    embed = create_embed("📈 Promotion", f"{member.mention} has been promoted to **{role.name}**!", discord.Color.gold())
-    await ctx.send(embed=embed)
+@bot.hybrid_command(name="promote", description="Promote a user")
+@commands.has_permissions(manage_roles=True)
+async def promote(ctx, member: discord.Member, new_rank: discord.Role, *, reason: str = "No reason provided"):
+    # The 'reason' is now defined in the line above!
+    
+    promote_embed = discord.Embed(
+        title="Promotion result:",
+        description=(
+            f"📑 **Reason:** {reason}\n"
+            f"👤 **Moderator:** {ctx.author.mention}\n"
+            f"⬆️ **New Rank:** {new_rank.mention}\n\n"
+            f"**Promoted:**\n"
+            f"✅ {member.display_name} [{member.id}]"
+        ),
+        color=0x2b2d31
+    )
+    promote_embed.set_footer(text="DGVRP")
+    await ctx.send(embed=promote_embed)
 
-keep_alive()
+
 bot.run(os.environ.get('TOKEN'))
