@@ -153,4 +153,4 @@ async def promote(ctx, member: discord.Member, role: discord.Role):
     await ctx.send(embed=embed)
 
 keep_alive()
-bot.run('MTQ5MTI0NTA3NzIzMjg3NzYwOA.Gcejd8.g8YaQrLWMJ7TOLsgN7M9ACXb0l7KaAYbhU723M')
+bot.run('DISCORD_TOKEN')
