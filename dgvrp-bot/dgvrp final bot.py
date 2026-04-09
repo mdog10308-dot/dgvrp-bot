@@ -136,5 +136,6 @@ async def promote(ctx, member: discord.Member, role: discord.Role):
     await member.add_roles(role)
     embed = create_embed("📈 Promotion", f"{member.mention} has been promoted to **{role.name}**!", discord.Color.gold())
     await ctx.send(embed=embed)
-
-bot.run('MTQ5MTI0NTA3NzIzMjg3NzYwOA.Gcejd8.g8YaQrLWMJ7TOLsgN7M9ACXb0l7KaAYbhU723M')
+import os
+token = os.environ.get('DISCORD_TOKEN')
+bot.run(token)
