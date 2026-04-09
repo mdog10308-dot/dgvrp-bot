@@ -20,11 +20,9 @@ import discord
 from discord.ext import commands
 from discord import app_commands
 import json
-from dotenv import load_dotenv
 from datetime import datetime
 
 # Load token
-load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 
 # Bot Setup
