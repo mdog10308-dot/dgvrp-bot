@@ -1,0 +1,94 @@
+{
+    "infractions": {
+        "1254156124962295849": [
+            {
+                "reason": "TEST",
+                "date": "2026-04-08",
+                "by": "bik_er46"
+            },
+            {
+                "reason": "TEST",
+                "date": "2026-04-08"
+            },
+            {
+                "reason": "TEST",
+                "date": "2026-04-08"
+            },
+            {
+                "reason": "General Infraction",
+                "date": "2026-04-08"
+            },
+            {
+                "reason": "Test",
+                "date": "2026-04-08"
+            },
+            {
+                "reason": "TEST",
+                "date": "2026-04-08"
+            },
+            {
+                "type": "KICK",
+                "issuer": "bik_er46",
+                "date": "2026-04-08 01:46",
+                "notes": "test"
+            },
+            {
+                "type": "TEST",
+                "issuer": "b_iker46",
+                "date": "2026-04-08 01:53",
+                "notes": "No notes provided"
+            },
+            {
+                "type": "WARNING",
+                "issuer": "b_iker46",
+                "date": "2026-04-08 01:57",
+                "notes": "No notes"
+            },
+            {
+                "type": "TEST",
+                "issuer": "bik_er46",
+                "date": "2026-04-09 16:32",
+                "notes": "No notes"
+            },
+            {
+                "reason": "General Infraction",
+                "date": "2026-04-09"
+            }
+        ],
+        "1059177551555199077": [
+            {
+                "type": "KICK",
+                "issuer": "b_iker46",
+                "date": "2026-04-08 01:45",
+                "notes": "No reason provided"
+            }
+        ]
+    },
+    "sessions": {
+        "1059177551555199077": {
+            "start": "2026-04-09 16:33:08.909899",
+            "type": "Shift"
+        }
+    },
+    "warnings": {
+        "1254156124962295849": [
+            {
+                "reason": "test",
+                "date": "2026-04-08",
+                "by": "bik_er46"
+            }
+        ],
+        "1425844133737660459": [
+            {
+                "reason": "test",
+                "date": "2026-04-08",
+                "by": "bik_er46"
+            }
+        ]
+    },
+    "types": {
+        "WARNING": {
+            "points": 1
+        }
+    }
+}
